@@ -65,7 +65,6 @@ Shows an indvidual's most watched channels on Youtube, and pairs them with other
 
 # To-Do (Unit 6)
 ## Wireframes
-[Add picture of your hand sketched wireframes in this section]
 <img src="VC7lbG6uIoxr.png" width=600>
 
 ### [BONUS] Digital Wireframes & Mockups
