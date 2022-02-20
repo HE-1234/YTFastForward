@@ -4,7 +4,7 @@ import android.content.Context
 import com.codepath.asynchttpclient.RequestParams
 import com.codepath.asynchttpclient.callback.JsonHttpResponseHandler
 import com.codepath.oauth.OAuthBaseClient
-import com.github.scribejava.apis.FlickrApi
+import com.github.scribejava.apis.GoogleApi20
 import com.github.scribejava.core.builder.api.BaseApi
 
 /*
@@ -21,7 +21,7 @@ import com.github.scribejava.core.builder.api.BaseApi
  */
 class RestClient(context: Context) : OAuthBaseClient(
     context, REST_API_INSTANCE, REST_URL, REST_CONSUMER_KEY, REST_CONSUMER_SECRET,
-    null, String.format(
+    SCOPE, String.format(
         REST_CALLBACK_URL_TEMPLATE,
         context.getString(R.string.intent_host),
         context.getString(R.string.intent_scheme),
@@ -31,9 +31,11 @@ class RestClient(context: Context) : OAuthBaseClient(
 ) {
 
     companion object {
-        val REST_API_INSTANCE = FlickrApi.instance(FlickrApi.FlickrPerm.WRITE) // Change this
+        const val SCOPE = "https://www.googleapis.com/auth/youtube.readonly"
 
-        const val REST_URL = "https://api.flickr.com/services" // Change this, base API URL
+        val REST_API_INSTANCE = GoogleApi20.instance() // Change this
+
+        const val REST_URL = "https://www.googleapis.com/youtube/v3" // Change this, base API URL
 
         const val REST_CONSUMER_KEY =
             BuildConfig.CONSUMER_KEY // Change this inside apikey.properties
