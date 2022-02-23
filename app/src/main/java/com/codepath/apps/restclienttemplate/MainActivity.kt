@@ -19,9 +19,11 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
         rvPlaylists = findViewById(R.id.rvPlaylist)
         rvPlaylists.layoutManager = LinearLayoutManager(this)
-
         playListAdapter = PlaylistAdapter(playlists)
         rvPlaylists.adapter = playListAdapter
+        
     }
-
+    /*fun populatePlaylists(){
+        
+    }*/
 }

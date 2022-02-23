@@ -49,7 +49,7 @@ class RestClient(context: Context) : OAuthBaseClient(
 
         // See https://developer.chrome.com/multidevice/android/intents
         const val REST_CALLBACK_URL_TEMPLATE =
-            "intent://%s#Intent;action=android.intent.action.VIEW;scheme=%s;package=%s;S.browser_fallback_url=%s;end"
+            "https://google.com"
     }
 
     // CHANGE THIS
