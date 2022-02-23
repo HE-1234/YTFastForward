@@ -1,8 +1,7 @@
 package com.codepath.apps.restclienttemplate
 
 import Playcom.codeparth.apps.restclienttemplate.MainActivity
-import android.accounts.AccountManager
-import android.content.ActivityNotFoundException
+import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
 import android.os.AsyncTask
@@ -10,16 +9,25 @@ import android.os.Bundle
 import android.util.Log
 import android.view.Menu
 import android.view.View
-import android.widget.Toast
 import com.codepath.apps.restclienttemplate.models.SampleModel
 import com.codepath.apps.restclienttemplate.models.SampleModelDao
 import com.codepath.oauth.OAuthLoginActionBarActivity
+import com.google.android.gms.auth.GoogleAuthException
 import com.google.android.gms.auth.GoogleAuthUtil
+import com.google.android.gms.auth.UserRecoverableAuthException
 import com.google.android.gms.auth.api.signin.GoogleSignIn
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
-import com.google.android.gms.common.AccountPicker
+import com.google.android.gms.common.api.ApiException
 import com.google.android.gms.common.api.Scope
+import com.google.android.gms.tasks.Task
+import com.google.api.client.auth.oauth2.BearerToken
+import com.google.api.client.auth.oauth2.Credential
+import com.google.api.client.auth.oauth2.TokenResponse
+import com.google.api.client.http.javanet.NetHttpTransport
+import com.google.api.client.json.jackson2.JacksonFactory
+import com.google.api.services.youtube.YouTube
 
 
 class LoginActivity : OAuthLoginActionBarActivity<RestClient>() {
@@ -37,7 +45,7 @@ class LoginActivity : OAuthLoginActionBarActivity<RestClient>() {
 
         val gso: GoogleSignInOptions = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
             .requestEmail()
-            .requestScopes(Scope("https://www.googleapis.com/auth/youtube.readonly"))
+            .requestScopes(Scope("https://www.googleapis.com/auth/youtube"))
             .requestServerAuthCode("689135212469-1spl0e79b927an0fffis49hga46vqfdh.apps.googleusercontent.com")
             .build()
 
@@ -59,6 +67,64 @@ class LoginActivity : OAuthLoginActionBarActivity<RestClient>() {
             val task = GoogleSignIn.getSignedInAccountFromIntent(data)
             handleSignInResult(task)
         }
+    }
+
+    private fun handleSignInResult(completedTask: Task<GoogleSignInAccount>) {
+        try {
+            val account = completedTask.getResult(ApiException::class.java)
+            // Signed in successfully, show authenticated UI.
+            val task: AsyncTask<Void?, Void?, String?> = @SuppressLint("StaticFieldLeak")
+            object : AsyncTask<Void?, Void?, String?>() {
+                @SuppressLint("StaticFieldLeak")
+                override fun onPostExecute(token: String?) {
+                    Log.i(TAG, "Access token retrieved:$token")
+                }
+
+                override fun doInBackground(vararg params: Void?): String? {
+                    var token: String? = null
+                    try {
+                        token = getTokenWithAccount(account)
+                    } catch (authEx: GoogleAuthException) {
+                        // The call is not ever expected to succeed
+                        // assuming you have already verified that
+                        // Google Play services is installed.
+                        Log.e(TAG, authEx.toString())
+                    }
+                    return token
+                }
+            }
+            task.execute()
+            Log.i(TAG, "token found async: ")
+
+        } catch (e: ApiException) {
+            // The ApiException status code indicates the detailed failure reason.
+            // Please refer to the GoogleSignInStatusCodes class reference for more information.
+            Log.w(TAG, "signInResult:failed code=" + e.statusCode)
+        }
+    }
+
+    fun getTokenWithAccount(account: GoogleSignInAccount): String? {
+        var token: String? = null
+        try {
+            val token = GoogleAuthUtil.getToken(this, account.account!!, "oauth2:https://www.googleapis.com/auth/youtube")
+            val tokenResponse = TokenResponse()
+            tokenResponse.accessToken = token
+            val credential: Credential = createCredentialWithAccessTokenOnly(tokenResponse)
+            val youtube = YouTube.Builder(NetHttpTransport(), JacksonFactory(), credential).build()
+
+            val request: YouTube.Channels.List = youtube.channels().list("snippet,contentDetails,statistics")
+            val response = request.setId("UC_x5XG1OV2P6uZZ5FSM9Ttw").execute()
+            Log.i("GettingChannels", response.toString())
+        } catch (e: Exception) {
+            Log.w(TAG, "token:failed code=" + e.message)
+        }
+        return token
+    }
+
+    private fun createCredentialWithAccessTokenOnly(tokenResponse: TokenResponse): Credential {
+        return Credential(BearerToken.authorizationHeaderAccessMethod()).setFromTokenResponse(
+            tokenResponse
+        )
     }
 
     // Inflate the menu; this adds items to the action bar if it is present.
@@ -87,6 +153,10 @@ class LoginActivity : OAuthLoginActionBarActivity<RestClient>() {
     // This should be tied to a button used to login
     fun loginToRest(view: View?) {
         signIn()
-        client.connect()
+//        client.connect()
+    }
+
+    companion object {
+        const val TAG = "LoginActivity"
     }
 }
