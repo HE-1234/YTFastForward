@@ -3,6 +3,7 @@ package com.codepath.apps.restclienttemplate
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.widget.LinearLayout
 import com.google.android.material.bottomsheet.BottomSheetDialog
@@ -15,6 +16,12 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.codepath.apps.restclienttemplate.adapters.PlaylistAdapter
 import com.codepath.apps.restclienttemplate.models.Playlist
+import com.google.api.client.auth.oauth2.BearerToken
+import com.google.api.client.auth.oauth2.Credential
+import com.google.api.client.auth.oauth2.TokenResponse
+import com.google.api.client.http.javanet.NetHttpTransport
+import com.google.api.client.json.jackson2.JacksonFactory
+import com.google.api.services.youtube.YouTube
 
 class MainActivity2 : AppCompatActivity() {
 
@@ -34,8 +41,9 @@ class MainActivity2 : AppCompatActivity() {
         mBotton.setOnClickListener(View.OnClickListener() {
             showBottomSheetDialog()
         })
+        
     }
-
+    
 
     override fun onCreateOptionsMenu(menu: Menu) : Boolean {
         // Inflate the menu; this adds items to the action bar if it is present.

@@ -1,6 +1,5 @@
 package com.codepath.apps.restclienttemplate
 
-import Playcom.codeparth.apps.restclienttemplate.MainActivity
 import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.AsyncTask
@@ -26,6 +25,10 @@ import com.google.api.client.auth.oauth2.TokenResponse
 import com.google.api.client.http.javanet.NetHttpTransport
 import com.google.api.client.json.jackson2.JacksonFactory
 import com.google.api.services.youtube.YouTube
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.MainScope
+import kotlinx.coroutines.async
+import kotlinx.coroutines.launch
 
 
 class LoginActivity : OAuthLoginActionBarActivity<RestClient>() {
@@ -34,12 +37,10 @@ class LoginActivity : OAuthLoginActionBarActivity<RestClient>() {
     lateinit var mGoogleSignInClient: GoogleSignInClient
     val RC_SIGN_IN = 9001
     var accessToken: String? = null
+    var credential: Credential? = null
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
-
-
-
 
 
         val sampleModel = SampleModel()
@@ -70,55 +71,57 @@ class LoginActivity : OAuthLoginActionBarActivity<RestClient>() {
             // a listener.
             val task = GoogleSignIn.getSignedInAccountFromIntent(data)
             handleSignInResult(task)
-            
-            Log.i(TAG, "token found async: " + accessToken)
-            val tokenResponse = TokenResponse()
-            tokenResponse.accessToken = accessToken
-            val credential: Credential = createCredentialWithAccessTokenOnly(tokenResponse)
-            val youtube = YouTube.Builder(NetHttpTransport(), JacksonFactory(), credential).build()
-
-            val request: YouTube.Videos.List = youtube.videos()
-                .list("snippet,contentDetails,statistics")
-            val response = request.setMyRating("like").execute()
-            Log.i("GettingChannels", response.toString())
         }
     }
 
     private fun handleSignInResult(completedTask: Task<GoogleSignInAccount>) {
-        try {
-            val account = completedTask.getResult(ApiException::class.java)
-            // Signed in successfully, show authenticated UI.
-            val task: AsyncTask<Void?, Void?, String?> = @SuppressLint("StaticFieldLeak")
-            object : AsyncTask<Void?, Void?, String?>() {
-                @SuppressLint("StaticFieldLeak")
-                override fun onPostExecute(token: String?) {
-                    Log.i(TAG, "Access token retrieved:$token")
-                    if (token != null) {
-                        accessToken = token
-                    }
-                }
-
-                override fun doInBackground(vararg params: Void?): String? {
-                    var token: String? = null
-                    try {
-                        token = getTokenWithAccount(account)
-                    } catch (authEx: GoogleAuthException) {
-                        // The call is not ever expected to succeed
-                        // assuming you have already verified that
-                        // Google Play services is installed.
-                        Log.e(TAG, authEx.toString())
-                    }
-                    return token
+        val account = completedTask.getResult(ApiException::class.java)
+        val coroutineScope = MainScope()
+        coroutineScope.launch {
+            val defer = async(Dispatchers.IO) {
+                Log.d("Track", "Async Fetch Started")
+                try {
+                    getTokenWithAccount(account)
+                } catch (authEx: GoogleAuthException) {
+                    Log.e(TAG, authEx.toString())
                 }
             }
-            task.execute()
-            Thread.sleep(12000)
-
-        } catch (e: ApiException) {
-            // The ApiException status code indicates the detailed failure reason.
-            // Please refer to the GoogleSignInStatusCodes class reference for more information.
-            Log.w(TAG, "signInResult:failed code=" + e.statusCode)
+            accessToken = defer.await() as String?
+            Log.d("Track", "Async Fetch Finished")
+            val intent = Intent(this@LoginActivity, MainActivity::class.java)
+            intent.putExtra("accessToken", accessToken)
+            startActivity(intent)
         }
+
+//        try {
+//            // Signed in successfully, show authenticated UI.
+//            val task: AsyncTask<Void?, Void?, String?> = @SuppressLint("StaticFieldLeak")
+//            object : AsyncTask<Void?, Void?, String?>() {
+//                @SuppressLint("StaticFieldLeak")
+//                override fun onPostExecute(token: String?) {
+//                    Log.i(TAG, "Access token retrieved:$token")
+//                    if (token != null) {
+//                        accessToken = token
+//                    }
+//                }
+//
+//                override fun doInBackground(vararg params: Void?): String? {
+//                    var token: String? = null
+//                    try {
+//                        token = getTokenWithAccount(account)
+//                    } catch (authEx: GoogleAuthException) {
+//                    }
+//                    return token
+//                }
+//            }
+////            task.execute()
+////            Thread.sleep(12000)
+//
+//        } catch (e: ApiException) {
+//            // The ApiException status code indicates the detailed failure reason.
+//            // Please refer to the GoogleSignInStatusCodes class reference for more information.
+//            Log.w(TAG, "signInResult:failed code=" + e.statusCode)
+//        }
     }
 
     fun getTokenWithAccount(account: GoogleSignInAccount): String? {
@@ -129,12 +132,6 @@ class LoginActivity : OAuthLoginActionBarActivity<RestClient>() {
             Log.w(TAG, "token:failed code=" + e.message)
         }
         return token
-    }
-
-    private fun createCredentialWithAccessTokenOnly(tokenResponse: TokenResponse): Credential {
-        return Credential(BearerToken.authorizationHeaderAccessMethod()).setFromTokenResponse(
-            tokenResponse
-        )
     }
 
     // Inflate the menu; this adds items to the action bar if it is present.
