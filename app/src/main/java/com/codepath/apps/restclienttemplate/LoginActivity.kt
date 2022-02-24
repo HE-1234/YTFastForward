@@ -37,6 +37,11 @@ class LoginActivity : OAuthLoginActionBarActivity<RestClient>() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
+
+
+
+
+
         val sampleModel = SampleModel()
         sampleModel.name = "CodePath"
         sampleModelDao = (applicationContext as RestApplication).myDatabase?.sampleModelDao()
