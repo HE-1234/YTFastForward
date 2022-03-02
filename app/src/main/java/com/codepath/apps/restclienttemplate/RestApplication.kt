@@ -33,8 +33,9 @@ class RestApplication : Application() {
     }
 
     companion object {
-        fun getRestClient(context: Context): RestClient {
-            return OAuthBaseClient.getInstance(RestClient::class.java, context) as RestClient
+        lateinit var accessToken: String
+        fun getYoutubeClient(context: Context): YoutubeClient {
+            return YoutubeClient(accessToken)
         }
     }
 }

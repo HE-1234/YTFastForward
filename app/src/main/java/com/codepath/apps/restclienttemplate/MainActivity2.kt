@@ -68,11 +68,15 @@ class MainActivity2 : AppCompatActivity() {
         if (createAuto != null) {
             createAuto.setOnClickListener(View.OnClickListener {
                 Toast.makeText(this, "Create Auto", Toast.LENGTH_LONG).show();
+                //ToDo:Start new fragment that shows a xml where user can enter appropriate fields
+
             })
         }
         if (createManual != null) {
             createManual.setOnClickListener(View.OnClickListener {
                 Toast.makeText(this, "Create Manual", Toast.LENGTH_LONG).show();
+                //ToDo: Start a new fragment that shows an xml where use can enter appropriate fields
+                
             })
         }
         bottomSheetDialog.show();

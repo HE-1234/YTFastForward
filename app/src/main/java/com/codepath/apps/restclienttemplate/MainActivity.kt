@@ -44,31 +44,8 @@ class MainActivity : AppCompatActivity() {
         mBotton.setOnClickListener(View.OnClickListener() {
             showBottomSheetDialog()
         })
-
         val accessToken = intent.getStringExtra("accessToken")
         Log.i(TAG, "access token found from intent: " + accessToken)
-        val tokenResponse = TokenResponse()
-        tokenResponse.accessToken = accessToken
-        val credential: Credential = createCredentialWithAccessTokenOnly(tokenResponse)
-        val youtube = YouTube.Builder(NetHttpTransport(), JacksonFactory(), credential).build()
-
-        val request: YouTube.Videos.List = youtube.videos()
-            .list("snippet,contentDetails,statistics")
-
-        val coroutineScope = MainScope()
-        coroutineScope.launch {
-            val defer = async(Dispatchers.IO) {
-                request.setMyRating("like").execute()
-
-            }
-            Log.i("GettingChannels", defer.await().toString())
-        }
-    }
-
-    private fun createCredentialWithAccessTokenOnly(tokenResponse: TokenResponse): Credential {
-        return Credential(BearerToken.authorizationHeaderAccessMethod()).setFromTokenResponse(
-            tokenResponse
-        )
     }
 
      override fun onCreateOptionsMenu(menu: Menu) : Boolean {

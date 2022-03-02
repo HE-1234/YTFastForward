@@ -86,8 +86,10 @@ class LoginActivity : OAuthLoginActionBarActivity<RestClient>() {
                     Log.e(TAG, authEx.toString())
                 }
             }
-            accessToken = defer.await() as String?
+            accessToken = defer.await() as String
             Log.d("Track", "Async Fetch Finished")
+
+            RestApplication.accessToken = accessToken as String
             val intent = Intent(this@LoginActivity, MainActivity::class.java)
             intent.putExtra("accessToken", accessToken)
             startActivity(intent)
@@ -144,7 +146,6 @@ class LoginActivity : OAuthLoginActionBarActivity<RestClient>() {
     // i.e Display application "homepage"
     override fun onLoginSuccess() {
         Log.i("LoginActivity", "Logged in successfully!")
-
         val i = Intent(this, MainActivity::class.java)
         startActivity(i)
     }
