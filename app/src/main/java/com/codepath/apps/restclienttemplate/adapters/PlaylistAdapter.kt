@@ -6,7 +6,7 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.codepath.apps.restclienttemplate.R
-import com.codepath.apps.restclienttemplate.models.Playlist
+import com.google.api.services.youtube.model.Playlist
 
 
 class PlaylistAdapter(val playlists: ArrayList<Playlist>): RecyclerView.Adapter<PlaylistAdapter.ViewHolder>() {
@@ -20,16 +20,15 @@ class PlaylistAdapter(val playlists: ArrayList<Playlist>): RecyclerView.Adapter<
         return  ViewHolder(view)
     }
 
-    override fun onBindViewHolder(holder: PlaylistAdapter.ViewHolder, position: Int) {
+    override fun onBindViewHolder(holder: PlaylistAdapter. ViewHolder, position: Int) {
         val playlist = playlists.get(position)
-        holder.tvTitle.text = playlist.title
+        holder.tvTitle.text = playlist.snippet.localized.title
     }
 
     override fun getItemCount(): Int {
         return playlists.size
     }
-
-
+    
     class ViewHolder(itemView: View): RecyclerView.ViewHolder(itemView){
         val tvTitle = itemView.findViewById<TextView>(R.id.tvPytitle)
     }

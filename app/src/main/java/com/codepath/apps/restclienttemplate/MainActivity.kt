@@ -2,6 +2,7 @@ package com.codepath.apps.restclienttemplate
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 
+import com.google.api.services.youtube.model.Playlist
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
@@ -14,14 +15,15 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.codepath.apps.restclienttemplate.R
 import com.codepath.apps.restclienttemplate.adapters.PlaylistAdapter
-import com.codepath.apps.restclienttemplate.models.Playlist
 import com.google.android.gms.common.api.ApiException
 import com.google.api.client.auth.oauth2.BearerToken
 import com.google.api.client.auth.oauth2.Credential
 import com.google.api.client.auth.oauth2.TokenResponse
 import com.google.api.client.http.javanet.NetHttpTransport
+import com.google.api.client.json.GenericJson
 import com.google.api.client.json.jackson2.JacksonFactory
 import com.google.api.services.youtube.YouTube
+import com.google.api.services.youtube.model.PlaylistListResponse
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.async
@@ -32,7 +34,8 @@ class MainActivity : AppCompatActivity() {
     val playlists =  ArrayList<Playlist>()
     lateinit var rvPlaylists: RecyclerView
     lateinit var playListAdapter: PlaylistAdapter
-     
+    val client = RestApplication.getYoutubeClient(this)
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -46,6 +49,15 @@ class MainActivity : AppCompatActivity() {
         })
         val accessToken = intent.getStringExtra("accessToken")
         Log.i(TAG, "access token found from intent: " + accessToken)
+        client.getUserPlaylists(object : YoutubeResponseHandler<PlaylistListResponse>() {
+            override fun onSuccess(json: PlaylistListResponse) {
+                playlists.addAll(json.items)
+                playListAdapter.notifyDataSetChanged()
+            }
+            override fun onFailure(response: PlaylistListResponse) {
+                Log.i(TAG, "Error")
+            }
+        })
     }
 
      override fun onCreateOptionsMenu(menu: Menu) : Boolean {
@@ -76,6 +88,8 @@ class MainActivity : AppCompatActivity() {
         if (createManual != null) {
             createManual.setOnClickListener(View.OnClickListener {
                 Toast.makeText(this, "Create Manual", Toast.LENGTH_LONG).show();
+                var manual = ManualPlaylistCreator()
+
             })
         }
         bottomSheetDialog.show();

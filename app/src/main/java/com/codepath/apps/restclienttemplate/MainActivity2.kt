@@ -15,13 +15,13 @@ import android.widget.Toast
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.codepath.apps.restclienttemplate.adapters.PlaylistAdapter
-import com.codepath.apps.restclienttemplate.models.Playlist
 import com.google.api.client.auth.oauth2.BearerToken
 import com.google.api.client.auth.oauth2.Credential
 import com.google.api.client.auth.oauth2.TokenResponse
 import com.google.api.client.http.javanet.NetHttpTransport
 import com.google.api.client.json.jackson2.JacksonFactory
 import com.google.api.services.youtube.YouTube
+import com.google.api.services.youtube.model.Playlist
 
 class MainActivity2 : AppCompatActivity() {
 
@@ -76,7 +76,8 @@ class MainActivity2 : AppCompatActivity() {
             createManual.setOnClickListener(View.OnClickListener {
                 Toast.makeText(this, "Create Manual", Toast.LENGTH_LONG).show();
                 //ToDo: Start a new fragment that shows an xml where use can enter appropriate fields
-                
+                var manual = ManualPlaylistCreator()
+
             })
         }
         bottomSheetDialog.show();

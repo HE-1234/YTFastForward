@@ -1,18 +1,18 @@
 package com.codepath.apps.restclienttemplate
 
-import android.app.Application
-import android.util.Log
-import com.codepath.asynchttpclient.callback.JsonHttpResponseHandler
 import com.google.api.client.auth.oauth2.BearerToken
 import com.google.api.client.auth.oauth2.Credential
 import com.google.api.client.auth.oauth2.TokenResponse
 import com.google.api.client.http.javanet.NetHttpTransport
 import com.google.api.client.json.jackson2.JacksonFactory
 import com.google.api.services.youtube.YouTube
+import com.google.api.services.youtube.model.PlaylistListResponse
+import com.google.api.services.youtube.model.VideoListResponse
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
+
 
 class YoutubeClient(accessToken: String){
     private val youtube: YouTube
@@ -29,16 +29,30 @@ class YoutubeClient(accessToken: String){
         )
     }
 
-    fun getLikedVideos(handler: JsonHttpResponseHandler) {
-        val request = youtube.videos().list("snippet,contentDetails,statistics")
-
+    fun getLikedVideos(handler: YoutubeResponseHandler<VideoListResponse>) {
+        val request: YouTube.Videos.List = youtube.videos().list("snippet,contentDetails,statistics")
         val coroutineScope = MainScope()
         coroutineScope.launch {
             val defer = async(Dispatchers.IO) {
-                val response = request.setMyRating("like").execute()
-                handler.onResponse(this, response.toString())
+                request.setMyRating("like").execute()
             }
+            handler.onResponse(defer.await())
         }
     }
+
+    fun getUserPlaylists(handler: YoutubeResponseHandler<PlaylistListResponse>) {
+        val request = youtube.playlists().list("snippet,contentDetails")
+        val coroutineScope = MainScope()
+        coroutineScope.launch {
+            val defer = async(Dispatchers.IO) {
+                request.setMaxResults(10L).setMine(true).execute()
+            }
+            handler.onResponse(defer.await())
+        }
+    }
+
+
+
+
 }
 
