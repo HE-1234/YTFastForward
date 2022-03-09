@@ -24,6 +24,7 @@ import com.google.api.client.json.GenericJson
 import com.google.api.client.json.jackson2.JacksonFactory
 import com.google.api.services.youtube.YouTube
 import com.google.api.services.youtube.model.PlaylistListResponse
+import com.google.api.services.youtube.model.SearchListResponse
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.async
@@ -60,7 +61,17 @@ class MainActivity : AppCompatActivity() {
         })
 
 
-        
+        client.getSearchResult("dog", object: YoutubeResponseHandler<SearchListResponse>(){
+            override fun onSuccess(json: SearchListResponse) {
+                Log.i(TAG , json.toString())
+                Toast.makeText(this@MainActivity, "Success", Toast.LENGTH_SHORT).show()
+            }
+
+            override fun onFailure(response: SearchListResponse) {
+                Log.i(TAG, "Error")
+            }
+
+        })
 
 
     }

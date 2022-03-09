@@ -6,11 +6,13 @@
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.GET_ACCOUNTS" />
+
     <queries>
         <intent>
             <action android:name="com.google.android.youtube.api.service.START" />
         </intent>
     </queries>
+
     <application
         android:name=".RestApplication"
         android:allowBackup="true"
@@ -19,6 +21,9 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.RestClientTemplateKotlin">
+        <activity
+            android:name=".ManualPlaylistCreator"
+            android:exported="false" />
         <activity
             android:name=".PlaylistViewActivity"
             android:exported="false" />

@@ -34,7 +34,7 @@ class MainActivity2 : AppCompatActivity() {
         setContentView(R.layout.activity_main2)
         rvPlaylists = findViewById(R.id.rvPlaylist)
         rvPlaylists.layoutManager = LinearLayoutManager(this)
-        playListAdapter = PlaylistAdapter(playlists)
+        playListAdapter = PlaylistAdapter(this, playlists)
         rvPlaylists.adapter = playListAdapter
 
         var mBotton = findViewById<FloatingActionButton>(R.id.btnCreate);

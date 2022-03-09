@@ -66,7 +66,7 @@ class YoutubeClient(accessToken: String){
         }
     }
 
-    fun getSearchResult(handler: YoutubeResponseHandler<SearchListResponse>, keyword: String) {
+    fun getSearchResult( keyword: String, handler: YoutubeResponseHandler<SearchListResponse>) {
         val request = youtube.search().list("snippet")
         val coroutineScope = MainScope()
         coroutineScope.launch {
