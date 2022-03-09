@@ -41,7 +41,7 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
         rvPlaylists = findViewById(R.id.rvPlaylist)
         rvPlaylists.layoutManager = LinearLayoutManager(this)
-        playListAdapter = PlaylistAdapter(playlists)
+        playListAdapter = PlaylistAdapter(this, playlists)
         rvPlaylists.adapter = playListAdapter
         var mBotton = findViewById<FloatingActionButton>(R.id.btnCreate);
         mBotton.setOnClickListener(View.OnClickListener() {
@@ -58,6 +58,11 @@ class MainActivity : AppCompatActivity() {
                 Log.i(TAG, "Error")
             }
         })
+
+
+        
+
+
     }
 
      override fun onCreateOptionsMenu(menu: Menu) : Boolean {

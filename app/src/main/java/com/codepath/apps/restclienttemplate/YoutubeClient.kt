@@ -6,8 +6,7 @@ import com.google.api.client.auth.oauth2.TokenResponse
 import com.google.api.client.http.javanet.NetHttpTransport
 import com.google.api.client.json.jackson2.JacksonFactory
 import com.google.api.services.youtube.YouTube
-import com.google.api.services.youtube.model.PlaylistListResponse
-import com.google.api.services.youtube.model.VideoListResponse
+import com.google.api.services.youtube.model.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.async
@@ -51,6 +50,32 @@ class YoutubeClient(accessToken: String){
         }
     }
 
+
+    fun createManualPlaylist(title: String, desc : String) {
+        val playlist = Playlist()
+        val snippet = PlaylistSnippet()
+        snippet.description = desc
+        snippet.title = title
+        playlist.snippet = snippet
+        val request = youtube.playlists().insert("snippet", playlist)
+        val coroutineScope = MainScope()
+        coroutineScope.launch {
+            val defer = async(Dispatchers.IO) {
+                request.execute()
+            }
+        }
+    }
+
+    fun getSearchResult(handler: YoutubeResponseHandler<SearchListResponse>, keyword: String) {
+        val request = youtube.search().list("snippet")
+        val coroutineScope = MainScope()
+        coroutineScope.launch {
+            val defer = async(Dispatchers.IO) {
+                request.setMaxResults(25L).setQ(keyword).execute()
+            }
+            handler.onResponse(defer.await())
+        }
+    }
 
 
 
