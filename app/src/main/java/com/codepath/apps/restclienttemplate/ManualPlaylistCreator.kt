@@ -35,7 +35,7 @@ class ManualPlaylistCreator : AppCompatActivity() {
             }
             else
             {
-                client.createManualPlaylist(title, description)
+                client.createManualPlaylistNoHandler(title, description)
                 finish()
             }
         }

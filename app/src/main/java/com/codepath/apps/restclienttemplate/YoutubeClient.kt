@@ -51,7 +51,7 @@ class YoutubeClient(accessToken: String){
     }
 
 
-    fun createManualPlaylist(title: String, desc : String) {
+    fun createManualPlaylistNoHandler(title: String, desc : String) {
         val playlist = Playlist()
         val snippet = PlaylistSnippet()
         snippet.description = desc
@@ -66,6 +66,24 @@ class YoutubeClient(accessToken: String){
         }
     }
 
+    fun createManualPlaylist(title: String, desc : String, handler: YoutubeResponseHandler<Playlist>) {
+        val playlist = Playlist()
+        val snippet = PlaylistSnippet()
+        snippet.description = desc
+        snippet.title = title
+        //TODO: make snippet.status = privacyStatus: public
+        playlist.snippet = snippet
+
+        val request = youtube.playlists().insert("snippet", playlist)
+        val coroutineScope = MainScope()
+        coroutineScope.launch {
+            val defer = async(Dispatchers.IO) {
+                request.execute()
+            }
+            handler.onResponse(defer.await())
+        }
+    }
+
     fun getSearchResult( keyword: String, handler: YoutubeResponseHandler<SearchListResponse>) {
         val request = youtube.search().list("snippet")
         val coroutineScope = MainScope()
@@ -76,6 +94,27 @@ class YoutubeClient(accessToken: String){
             handler.onResponse(defer.await())
         }
     }
+
+    fun addVideoToPlaylist(playlistId: String, videoId: String) {
+        val playlistItem = PlaylistItem()
+        val snippet = PlaylistItemSnippet()
+        snippet.playlistId = playlistId
+        snippet.position = 0L
+        val resourceId = ResourceId()
+        resourceId.kind = "youtube#video"
+        resourceId.videoId = videoId
+        snippet.resourceId = resourceId
+        playlistItem.snippet = snippet
+
+        val request = youtube.playlistItems().insert("snippet", playlistItem)
+        val coroutineScope = MainScope()
+        coroutineScope.launch {
+            val defer = async(Dispatchers.IO) {
+                request.execute()
+            }
+        }
+    }
+
 
 
 

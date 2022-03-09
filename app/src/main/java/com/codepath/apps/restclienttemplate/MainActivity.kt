@@ -1,4 +1,5 @@
 package com.codepath.apps.restclienttemplate
+import android.content.Intent
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 
@@ -59,21 +60,6 @@ class MainActivity : AppCompatActivity() {
                 Log.i(TAG, "Error")
             }
         })
-
-
-        client.getSearchResult("dog", object: YoutubeResponseHandler<SearchListResponse>(){
-            override fun onSuccess(json: SearchListResponse) {
-                Log.i(TAG , json.toString())
-                Toast.makeText(this@MainActivity, "Success", Toast.LENGTH_SHORT).show()
-            }
-
-            override fun onFailure(response: SearchListResponse) {
-                Log.i(TAG, "Error")
-            }
-
-        })
-
-
     }
 
      override fun onCreateOptionsMenu(menu: Menu) : Boolean {
@@ -98,14 +84,21 @@ class MainActivity : AppCompatActivity() {
 
         if (createAuto != null) {
             createAuto.setOnClickListener(View.OnClickListener {
-                Toast.makeText(this, "Create Auto", Toast.LENGTH_LONG).show();
+                Toast.makeText(this, "Create Auto", Toast.LENGTH_LONG).show()
+
+                val intent = Intent(this, AutomaticPlaylistCreator::class.java)
+                startActivity(intent)
+
+                bottomSheetDialog.dismiss()
             })
         }
         if (createManual != null) {
             createManual.setOnClickListener(View.OnClickListener {
-                Toast.makeText(this, "Create Manual", Toast.LENGTH_LONG).show();
-                var manual = ManualPlaylistCreator()
+                Toast.makeText(this, "Create Manual", Toast.LENGTH_LONG).show()
 
+                val intent = Intent(this, ManualPlaylistCreator::class.java)
+                startActivity(intent)
+                bottomSheetDialog.dismiss()
             })
         }
         bottomSheetDialog.show();
