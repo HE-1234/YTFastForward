@@ -22,7 +22,22 @@ class ManualPlaylistCreator : AppCompatActivity() {
         findViewById<Button>(R.id.btnConfirm).setOnClickListener {
             Toast.makeText(this, "Making Playlist...", Toast.LENGTH_SHORT).show()
 
+            val title = playlistName.text.toString()
+            val description = playlistDesc.text.toString()
+
+            if (title.isEmpty())
+            {
+                Toast.makeText(this, "Title cannot be empty", Toast.LENGTH_SHORT).show()
+            }
+            else if (description.isEmpty())
+            {
+                Toast.makeText(this, "Description cannot be empty", Toast.LENGTH_SHORT).show()
+            }
+            else
+            {
+                client.createManualPlaylist(title, description)
+                finish()
+            }
         }
-        
     }
 }
