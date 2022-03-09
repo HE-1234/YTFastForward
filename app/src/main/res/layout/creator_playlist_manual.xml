@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     tools:context=".ManualPlaylistCreator">
 
-
+<!-- Delete this file -->
     <TextView
         android:id="@+id/playlistName"
         android:layout_width="match_parent"

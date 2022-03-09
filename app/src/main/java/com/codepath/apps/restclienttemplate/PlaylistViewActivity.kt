@@ -16,7 +16,6 @@ class PlaylistViewActivity : YouTubeBaseActivity() {
         val id = intent.getStringExtra(PLAYLIST_EXTRA)
 
         val youTubePlayerView = findViewById<View>(R.id.player) as YouTubePlayerView
-
         youTubePlayerView.initialize("YOUR API KEY",
             object : YouTubePlayer.OnInitializedListener {
                 override fun onInitializationSuccess(

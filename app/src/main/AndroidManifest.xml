@@ -22,6 +22,12 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.RestClientTemplateKotlin">
         <activity
+            android:name=".EditActivity"
+            android:exported="false" />
+        <activity
+            android:name=".AutomaticPlaylistCreator"
+            android:exported="false" />
+        <activity
             android:name=".ManualPlaylistCreator"
             android:exported="false" />
         <activity
