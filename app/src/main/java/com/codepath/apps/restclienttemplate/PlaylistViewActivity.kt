@@ -1,8 +1,10 @@
 package com.codepath.apps.restclienttemplate
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import com.codepath.apps.restclienttemplate.adapters.PLAYLIST_EXTRA
+import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.youtube.player.YouTubeBaseActivity
 import com.google.android.youtube.player.YouTubeInitializationResult
 import com.google.android.youtube.player.YouTubePlayer
@@ -31,6 +33,12 @@ class PlaylistViewActivity : YouTubeBaseActivity() {
                     youTubeInitializationResult: YouTubeInitializationResult
                 ) {
                 }
+
             })
+        var mBotton = findViewById<FloatingActionButton>(R.id.btnCreate);
+        mBotton.setOnClickListener(View.OnClickListener() {
+            val intent = Intent(this@PlaylistViewActivity, EditActivity::class.java)
+            startActivity(intent)
+        })
     }
 }
