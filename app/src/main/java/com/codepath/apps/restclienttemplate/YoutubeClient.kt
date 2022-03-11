@@ -71,7 +71,7 @@ class YoutubeClient(accessToken: String){
         val snippet = PlaylistSnippet()
         snippet.description = desc
         snippet.title = title
-        //TODO: make snippet.status = privacyStatus: public
+        snippet.status = privacyStatus: public
         playlist.snippet = snippet
 
         val request = youtube.playlists().insert("snippet", playlist)
