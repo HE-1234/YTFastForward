@@ -14,21 +14,8 @@ import android.widget.LinearLayout
 import android.widget.Toast
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.codepath.apps.restclienttemplate.R
 import com.codepath.apps.restclienttemplate.adapters.PlaylistAdapter
-import com.google.android.gms.common.api.ApiException
-import com.google.api.client.auth.oauth2.BearerToken
-import com.google.api.client.auth.oauth2.Credential
-import com.google.api.client.auth.oauth2.TokenResponse
-import com.google.api.client.http.javanet.NetHttpTransport
-import com.google.api.client.json.GenericJson
-import com.google.api.client.json.jackson2.JacksonFactory
-import com.google.api.services.youtube.YouTube
 import com.google.api.services.youtube.model.PlaylistListResponse
-import com.google.api.services.youtube.model.SearchListResponse
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.MainScope
-import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 
 class MainActivity : AppCompatActivity() {
@@ -41,7 +28,7 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        rvPlaylists = findViewById(R.id.rvPlaylist)
+        rvPlaylists = findViewById(R.id.rvPlaylists)
         rvPlaylists.layoutManager = LinearLayoutManager(this)
         playListAdapter = PlaylistAdapter(this, playlists)
         rvPlaylists.adapter = playListAdapter
