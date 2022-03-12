@@ -5,10 +5,12 @@ import android.os.Bundle
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
+import android.widget.Button
 import androidx.appcompat.widget.SearchView
 import androidx.core.view.MenuItemCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.codepath.apps.restclienttemplate.adapters.PLAYLIST_EXTRA
 import com.codepath.apps.restclienttemplate.adapters.PlaylistAdapter
 import com.codepath.apps.restclienttemplate.adapters.VideoAdapter
 import com.google.api.services.youtube.model.*
@@ -16,7 +18,7 @@ import com.google.api.services.youtube.model.*
 
 class EditActivity : AppCompatActivity() {
     lateinit var client: YoutubeClient
-    val videos =  mutableListOf<SearchResult>()
+    val videos =  mutableListOf<Pair<SearchResult, Boolean>>()
     lateinit var rvVideos: RecyclerView
     lateinit var videoAdapter: VideoAdapter
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -27,6 +29,19 @@ class EditActivity : AppCompatActivity() {
         rvVideos.layoutManager = LinearLayoutManager(this)
         videoAdapter = VideoAdapter(this, videos)
         rvVideos.adapter = videoAdapter
+        findViewById<Button>(R.id.btn_cancel).setOnClickListener {
+            finish()
+        }
+
+        val id = intent.getStringExtra(PLAYLIST_EXTRA)
+        findViewById<Button>(R.id.btn_addVideos).setOnClickListener {
+            for (pair in videos) {
+                if (pair.second) {
+                    client.addVideoToPlaylist(id, pair.first.id.videoId)
+                }
+            }
+            finish()
+        }
     }
     override fun onCreateOptionsMenu(menu: Menu) : Boolean {
         // Inflate the menu; this adds items to the action bar if it is present.
@@ -39,9 +54,11 @@ class EditActivity : AppCompatActivity() {
                 client.getSearchResult(query, object : YoutubeResponseHandler<SearchListResponse>() {
                     override fun onSuccess(json: SearchListResponse) {
                         videos.clear()
-                        videos.addAll(json.items)
+                        for (video in json.items){
+                            videos.add(Pair(video, false))
+                        }
                         videoAdapter.notifyDataSetChanged()
-                        Log.i(TAG, videos.toString())
+                        //Log.i(TAG, videos.toString())
                     }
                     override fun onFailure(response: SearchListResponse) {
                         Log.i(TAG, "Error")

@@ -39,5 +39,10 @@ class ManualPlaylistCreator : AppCompatActivity() {
                 finish()
             }
         }
+
+        findViewById<Button>(R.id.btnClear).setOnClickListener {
+            playlistName.getText().clear()
+            playlistDesc.getText().clear()
+        }
     }
 }

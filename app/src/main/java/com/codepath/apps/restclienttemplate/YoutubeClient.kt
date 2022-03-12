@@ -57,6 +57,7 @@ class YoutubeClient(accessToken: String){
         snippet.description = desc
         snippet.title = title
         playlist.snippet = snippet
+        playlist.status.privacyStatus = "public"
         val request = youtube.playlists().insert("snippet", playlist)
         val coroutineScope = MainScope()
         coroutineScope.launch {
@@ -71,9 +72,8 @@ class YoutubeClient(accessToken: String){
         val snippet = PlaylistSnippet()
         snippet.description = desc
         snippet.title = title
-        //snippet.status = privacyStatus: public
+        playlist.status.privacyStatus = "public"
         playlist.snippet = snippet
-
         val request = youtube.playlists().insert("snippet", playlist)
         val coroutineScope = MainScope()
         coroutineScope.launch {
@@ -89,7 +89,7 @@ class YoutubeClient(accessToken: String){
         val coroutineScope = MainScope()
         coroutineScope.launch {
             val defer = async(Dispatchers.IO) {
-                request.setMaxResults(25L).setQ(keyword).execute()
+                request.setMaxResults(25L).setQ(keyword).setType("video").execute()
             }
             handler.onResponse(defer.await())
         }
@@ -113,6 +113,19 @@ class YoutubeClient(accessToken: String){
                 request.execute()
             }
         }
+    }
+
+    fun deletePlaylist(playlistId: String){
+        val request = youtube.playlists().delete(playlistId)    
+
+        val coroutineScope = MainScope()
+        coroutineScope.launch {
+            val defer = async(Dispatchers.IO) {
+                request.execute()
+            }
+        }
+        
+
     }
 
 

@@ -30,11 +30,14 @@ class AutomaticPlaylistCreator : AppCompatActivity() {
                         keyword,
                         object : YoutubeResponseHandler<SearchListResponse>() {
                             override fun onSuccess(json: SearchListResponse) {
-                                for (i in json.items) {
-                                    if (i.id != null && i.id.videoId != null) {
-                                        client.addVideoToPlaylist(playlist.id, i.id.videoId)
-                                    }
+                            val count = 0
+                            while(count < 25) {
+                                val rnds = (0..24).random()
+                                val jsonObj = json.items[rnds]
+                                if (jsonObj.id != null && jsonObj.id.videoId != null) {
+                                    client.addVideoToPlaylist(playlist.id, jsonObj.id.videoId)
                                 }
+                            }
                                 Toast.makeText(this@AutomaticPlaylistCreator, "Success", Toast.LENGTH_SHORT).show()
                                 finish()
                             }

@@ -38,6 +38,7 @@ class PlaylistViewActivity : YouTubeBaseActivity() {
         var mBotton = findViewById<FloatingActionButton>(R.id.btnCreate);
         mBotton.setOnClickListener(View.OnClickListener() {
             val intent = Intent(this@PlaylistViewActivity, EditActivity::class.java)
+            intent.putExtra(PLAYLIST_EXTRA, id)
             startActivity(intent)
         })
     }
