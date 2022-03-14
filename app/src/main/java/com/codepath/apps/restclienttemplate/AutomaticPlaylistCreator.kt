@@ -17,11 +17,13 @@ class AutomaticPlaylistCreator : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_automatic_playlist_creator)
+        val accessToken = intent.getStringExtra("accessToken")
+        Log.i("AutoPlayListCreator","The access Token is recieved $accessToken")
 
         val GeneraterButton = findViewById<Button>(R.id.generateBtn)
         val PlayListTypeTV = findViewById<TextView>(R.id.PlayListNameTV)
 
-
+        GeneraterButton.text
         GeneraterButton.setOnClickListener() {
             val keyword = PlayListTypeTV.text.toString()
             client.createManualPlaylist(keyword, "", object: YoutubeResponseHandler<Playlist>() {
@@ -30,13 +32,14 @@ class AutomaticPlaylistCreator : AppCompatActivity() {
                         keyword,
                         object : YoutubeResponseHandler<SearchListResponse>() {
                             override fun onSuccess(json: SearchListResponse) {
-                            val count = 0
-                            while(count < 25) {
-                                val rnds = (0..24).random()
-                                val jsonObj = json.items[rnds]
+                            var count = 0
+                            while(count < 10) {
+//                                val rnds = (0..24).random()
+                                val jsonObj = json.items[count]
                                 if (jsonObj.id != null && jsonObj.id.videoId != null) {
                                     client.addVideoToPlaylist(playlist.id, jsonObj.id.videoId)
                                 }
+                               count += 1
                             }
                                 Toast.makeText(this@AutomaticPlaylistCreator, "Success", Toast.LENGTH_SHORT).show()
                                 finish()

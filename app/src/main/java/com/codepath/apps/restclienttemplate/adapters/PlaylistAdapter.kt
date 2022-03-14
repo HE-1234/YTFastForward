@@ -13,7 +13,7 @@ import com.google.api.services.youtube.model.Playlist
 
 const val PLAYLIST_EXTRA = "PLAYLIST_EXTRA"
 
-class PlaylistAdapter(private val context: Context, private val playlists: List<Playlist>): RecyclerView.Adapter<PlaylistAdapter.ViewHolder>() {
+class PlaylistAdapter(private val context: Context, private val playlists: ArrayList<Playlist>): RecyclerView.Adapter<PlaylistAdapter.ViewHolder>() {
 
 
 
@@ -33,6 +33,17 @@ class PlaylistAdapter(private val context: Context, private val playlists: List<
     override fun getItemCount(): Int {
         return playlists.size
     }
+
+    fun clear() {
+        playlists.clear()
+        notifyDataSetChanged()
+    }
+
+//    fun addAll(playlistList: List<Playlist>)
+//    {
+//        playlists.addAll(playlistList)
+//        notifyDataSetChanged()
+//    }
     
     inner class ViewHolder(itemView: View): RecyclerView.ViewHolder(itemView), View.OnClickListener{
         val tvTitle = itemView.findViewById<TextView>(R.id.tvPytitle)

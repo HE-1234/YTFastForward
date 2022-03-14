@@ -54,11 +54,13 @@ class YoutubeClient(accessToken: String){
     fun createManualPlaylistNoHandler(title: String, desc : String) {
         val playlist = Playlist()
         val snippet = PlaylistSnippet()
+        val status = PlaylistStatus()
+        status.privacyStatus = "public"
         snippet.description = desc
         snippet.title = title
         playlist.snippet = snippet
-        playlist.status.privacyStatus = "public"
-        val request = youtube.playlists().insert("snippet", playlist)
+        playlist.status = status
+        val request = youtube.playlists().insert("snippet, status", playlist)
         val coroutineScope = MainScope()
         coroutineScope.launch {
             val defer = async(Dispatchers.IO) {
@@ -70,11 +72,13 @@ class YoutubeClient(accessToken: String){
     fun createManualPlaylist(title: String, desc : String, handler: YoutubeResponseHandler<Playlist>) {
         val playlist = Playlist()
         val snippet = PlaylistSnippet()
+        val status = PlaylistStatus()
+        status.privacyStatus = "public"
         snippet.description = desc
         snippet.title = title
-        playlist.status.privacyStatus = "public"
+        playlist.status = status
         playlist.snippet = snippet
-        val request = youtube.playlists().insert("snippet", playlist)
+        val request = youtube.playlists().insert("snippet, status", playlist)
         val coroutineScope = MainScope()
         coroutineScope.launch {
             val defer = async(Dispatchers.IO) {

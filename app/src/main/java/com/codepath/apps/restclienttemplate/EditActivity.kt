@@ -23,6 +23,8 @@ class EditActivity : AppCompatActivity() {
     lateinit var videoAdapter: VideoAdapter
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        val accessToken = intent.getStringExtra("accessToken")
+        Log.i("Edit Activity","The access Token is recieved $accessToken")
         setContentView(R.layout.activity_edit)
         client = RestApplication.getYoutubeClient(this)
         rvVideos = findViewById(R.id.rvVideos)

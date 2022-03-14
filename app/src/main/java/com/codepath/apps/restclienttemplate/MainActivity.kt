@@ -14,6 +14,7 @@ import android.widget.LinearLayout
 import android.widget.Toast
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.codepath.apps.restclienttemplate.adapters.PlaylistAdapter
 import com.google.api.services.youtube.model.PlaylistListResponse
 import kotlinx.coroutines.launch
@@ -23,11 +24,23 @@ class MainActivity : AppCompatActivity() {
     val playlists =  ArrayList<Playlist>()
     lateinit var rvPlaylists: RecyclerView
     lateinit var playListAdapter: PlaylistAdapter
+    lateinit var swipeContainer : SwipeRefreshLayout
     val client = RestApplication.getYoutubeClient(this)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        val accessToken = intent.getStringExtra("accessToken")
+        Log.i(TAG, "access token found from intent: " + accessToken)
         setContentView(R.layout.activity_main)
+        swipeContainer = findViewById(R.id.swipeContainer)
+        swipeContainer.setOnRefreshListener {
+            Log.i(TAG, "refreshing Timeline")
+            populatePlaylists()
+        }
+        swipeContainer.setColorSchemeResources(android.R.color.holo_blue_bright,
+            android.R.color.holo_green_light,
+            android.R.color.holo_orange_light,
+            android.R.color.holo_red_light)
         rvPlaylists = findViewById(R.id.rvPlaylists)
         rvPlaylists.layoutManager = LinearLayoutManager(this)
         playListAdapter = PlaylistAdapter(this, playlists)
@@ -36,8 +49,6 @@ class MainActivity : AppCompatActivity() {
         mBotton.setOnClickListener(View.OnClickListener() {
             showBottomSheetDialog()
         })
-        val accessToken = intent.getStringExtra("accessToken")
-        Log.i(TAG, "access token found from intent: " + accessToken)
         client.getUserPlaylists(object : YoutubeResponseHandler<PlaylistListResponse>() {
             override fun onSuccess(json: PlaylistListResponse) {
                 playlists.addAll(json.items)
@@ -89,6 +100,22 @@ class MainActivity : AppCompatActivity() {
             })
         }
         bottomSheetDialog.show();
+    }
+
+    fun populatePlaylists()
+    {
+        val accessToken = intent.getStringExtra("accessToken")
+        playListAdapter.clear()
+        client.getUserPlaylists(object : YoutubeResponseHandler<PlaylistListResponse>() {
+            override fun onSuccess(json: PlaylistListResponse) {
+                playlists.addAll(json.items)
+                playListAdapter.notifyDataSetChanged()
+                swipeContainer.isRefreshing = false
+            }
+            override fun onFailure(response: PlaylistListResponse) {
+                Log.i(TAG, "Error")
+            }
+        })
     }
 
 
