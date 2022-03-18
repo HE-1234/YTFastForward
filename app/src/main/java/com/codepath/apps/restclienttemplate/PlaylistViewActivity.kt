@@ -2,22 +2,37 @@ package com.codepath.apps.restclienttemplate
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.View
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.codepath.apps.restclienttemplate.adapters.PLAYLIST_EXTRA
+import com.codepath.apps.restclienttemplate.adapters.VideoAdapter
+import com.codepath.apps.restclienttemplate.adapters.VideoViewAdapter
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.youtube.player.YouTubeBaseActivity
 import com.google.android.youtube.player.YouTubeInitializationResult
 import com.google.android.youtube.player.YouTubePlayer
 import com.google.android.youtube.player.YouTubePlayerView
+import com.google.api.services.youtube.model.*
 
 
 class PlaylistViewActivity : YouTubeBaseActivity() {
+    lateinit var rvVideos: RecyclerView
+    lateinit var videoAdapter: VideoViewAdapter
+    lateinit var client: YoutubeClient
+    lateinit var id :String
+    val videos = mutableListOf<PlaylistItem>()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_playlist_view)
-        val id = intent.getStringExtra(PLAYLIST_EXTRA)
-
+        id = intent.getStringExtra(PLAYLIST_EXTRA)
+        client = RestApplication.getYoutubeClient(this)
         val youTubePlayerView = findViewById<View>(R.id.player) as YouTubePlayerView
+        rvVideos = findViewById(R.id.rvVideoView)
+        rvVideos.layoutManager = LinearLayoutManager(this)
+        videoAdapter = VideoViewAdapter(this, videos)
+        rvVideos.adapter = videoAdapter
         youTubePlayerView.initialize("YOUR API KEY",
             object : YouTubePlayer.OnInitializedListener {
                 override fun onInitializationSuccess(
@@ -35,11 +50,37 @@ class PlaylistViewActivity : YouTubeBaseActivity() {
                 }
 
             })
+        getVideos(id)
         var mBotton = findViewById<FloatingActionButton>(R.id.btnCreate);
         mBotton.setOnClickListener(View.OnClickListener() {
             val intent = Intent(this@PlaylistViewActivity, EditActivity::class.java)
             intent.putExtra(PLAYLIST_EXTRA, id)
-            startActivity(intent)
+            startActivityForResult(intent,100)
         })
+    }
+    fun getVideos(id:String){
+        client.retrievePlaylistItems(id,  object : YoutubeResponseHandler<PlaylistItemListResponse>() {
+            override fun onSuccess(json: PlaylistItemListResponse) {
+                videos.clear()
+                for (vid in json.items) {
+                    videos.add(vid)
+                }
+                videoAdapter.notifyDataSetChanged()
+            }
+            override fun onFailure(response: PlaylistItemListResponse) {
+                Log.i(TAG,"Error")
+            }
+        })
+    }
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+
+        if(resultCode == RESULT_OK && requestCode == 100){
+            getVideos(id)
+            videoAdapter.notifyDataSetChanged()
+        }
+        super.onActivityResult(requestCode, resultCode, data)
+    }
+    companion object {
+        const val TAG = "PlaylistViewActivity"
     }
 }
