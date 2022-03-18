@@ -11,6 +11,10 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
+import com.google.api.services.youtube.model.PlaylistItemListResponse
+
+
+
 
 
 class YoutubeClient(accessToken: String){
@@ -131,7 +135,19 @@ class YoutubeClient(accessToken: String){
         
 
     }
-
+    fun retrievePlaylistItems(playlistId: String, handler: YoutubeResponseHandler<PlaylistItemListResponse>) {
+        val request = youtube.playlistItems().list("snippet,contentDetails")
+        val coroutineScope = MainScope()
+        coroutineScope.launch {
+            val defer = async(Dispatchers.IO) {
+                request
+                .setMaxResults(10L)
+                .setPlaylistId(playlistId)
+                .execute();
+            }
+            handler.onResponse(defer.await())
+        }
+    }
 
 
 

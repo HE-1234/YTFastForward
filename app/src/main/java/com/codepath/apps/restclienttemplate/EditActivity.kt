@@ -42,6 +42,7 @@ class EditActivity : AppCompatActivity() {
                     client.addVideoToPlaylist(id, pair.first.id.videoId)
                 }
             }
+            setResult(RESULT_OK,intent)
             finish()
         }
     }
