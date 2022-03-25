@@ -62,7 +62,6 @@ class PlaylistViewActivity : YouTubeBaseActivity() {
     }
 
     fun onRecyclerItemClick(index: Int) {
-        youtubePlayer.release()
         youtubePlayer.cuePlaylist(id, index, 0)
     }
 
