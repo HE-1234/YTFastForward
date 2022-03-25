@@ -49,7 +49,9 @@ class PlaylistAdapter(private val context: Context, private val playlists: Array
                         Toast.makeText(context, "WIll Share", Toast.LENGTH_SHORT).show()
                         val sendIntent: Intent = Intent().apply {
                             action = Intent.ACTION_SEND
-                            val playlistLink = playlists[position].etag
+
+                            val playlistId = playlists[position].id
+                            val playlistLink = "https://www.youtube.com/playlist?list=" +  playlistId
                             putExtra(Intent.EXTRA_TEXT, playlistLink)
                             type = "text/plain"
                         }
