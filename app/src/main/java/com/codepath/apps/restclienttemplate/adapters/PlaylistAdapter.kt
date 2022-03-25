@@ -3,19 +3,24 @@ package com.codepath.apps.restclienttemplate.adapters
 import android.content.Context
 import android.content.Intent
 import android.view.LayoutInflater
+import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
+import android.widget.PopupMenu
 import android.widget.TextView
+import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
 import com.codepath.apps.restclienttemplate.PlaylistViewActivity
 import com.codepath.apps.restclienttemplate.R
+import com.codepath.apps.restclienttemplate.RestApplication
 import com.google.api.services.youtube.model.Playlist
 
 const val PLAYLIST_EXTRA = "PLAYLIST_EXTRA"
 
+
 class PlaylistAdapter(private val context: Context, private val playlists: ArrayList<Playlist>): RecyclerView.Adapter<PlaylistAdapter.ViewHolder>() {
 
-
+    val client = RestApplication.getYoutubeClient(context)
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PlaylistAdapter.ViewHolder {
         val context = parent.context
@@ -27,6 +32,28 @@ class PlaylistAdapter(private val context: Context, private val playlists: Array
     override fun onBindViewHolder(holder: PlaylistAdapter. ViewHolder, position: Int) {
         val playlist = playlists.get(position)
         holder.tvTitle.text = playlist.snippet.localized.title
+        holder.tvOptions.setOnClickListener {
+            val popup = PopupMenu(context, holder.tvOptions)
+            popup.inflate(R.menu.options_menu)
+
+            popup.setOnMenuItemClickListener(PopupMenu.OnMenuItemClickListener { item: MenuItem? ->
+
+                when (item!!.itemId) {
+                    R.id.Option1 -> {
+                        Toast.makeText(context, "WIll Delete", Toast.LENGTH_SHORT).show()
+                        var playlistId = playlists[position].id
+                        client.deletePlaylist(playlistId)
+                    }
+                    R.id.Option2 -> {
+                        Toast.makeText(context, "WIll Share", Toast.LENGTH_SHORT).show()
+                    }
+                }
+
+                true
+            })
+
+            popup.show()
+        }
 
     }
 
@@ -47,6 +74,7 @@ class PlaylistAdapter(private val context: Context, private val playlists: Array
     
     inner class ViewHolder(itemView: View): RecyclerView.ViewHolder(itemView), View.OnClickListener{
         val tvTitle = itemView.findViewById<TextView>(R.id.tvPytitle)
+        val tvOptions = itemView.findViewById<TextView>(R.id.tvOptions)
 
         init {
             itemView.setOnClickListener(this)

@@ -57,7 +57,10 @@ class PlaylistViewActivity : YouTubeBaseActivity() {
             intent.putExtra(PLAYLIST_EXTRA, id)
             startActivityForResult(intent,100)
         })
+
     }
+
+
     fun getVideos(id:String){
         client.retrievePlaylistItems(id,  object : YoutubeResponseHandler<PlaylistItemListResponse>() {
             override fun onSuccess(json: PlaylistItemListResponse) {
