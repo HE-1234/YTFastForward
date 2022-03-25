@@ -79,6 +79,7 @@ class PlaylistViewActivity : YouTubeBaseActivity() {
             }
         })
     }
+    
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
 
         if(resultCode == RESULT_OK && requestCode == 100){
