@@ -9,6 +9,7 @@ import android.view.ViewGroup
 import android.widget.PopupMenu
 import android.widget.TextView
 import android.widget.Toast
+import androidx.core.content.ContextCompat.startActivity
 import androidx.recyclerview.widget.RecyclerView
 import com.codepath.apps.restclienttemplate.PlaylistViewActivity
 import com.codepath.apps.restclienttemplate.R
@@ -46,6 +47,16 @@ class PlaylistAdapter(private val context: Context, private val playlists: Array
                     }
                     R.id.Option2 -> {
                         Toast.makeText(context, "WIll Share", Toast.LENGTH_SHORT).show()
+                        val sendIntent: Intent = Intent().apply {
+                            action = Intent.ACTION_SEND
+                            val playlistLink = playlists[position].etag
+                            putExtra(Intent.EXTRA_TEXT, playlistLink)
+                            type = "text/plain"
+                        }
+
+                        val shareIntent = Intent.createChooser(sendIntent, "Sharing")
+                        startActivity(context, shareIntent, null)
+
                     }
                 }
 
