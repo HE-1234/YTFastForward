@@ -12,13 +12,13 @@ import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 import com.google.api.services.youtube.model.PlaylistItemListResponse
-
-
-
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 
 
 class YoutubeClient(accessToken: String){
     private val youtube: YouTube
+    private val mtx = Mutex()
     init {
         val tokenResponse = TokenResponse()
         tokenResponse.accessToken = accessToken
@@ -118,7 +118,9 @@ class YoutubeClient(accessToken: String){
         val coroutineScope = MainScope()
         coroutineScope.launch {
             val defer = async(Dispatchers.IO) {
-                request.execute()
+                mtx.withLock {
+                    request.execute()
+                }
             }
         }
     }
