@@ -26,7 +26,9 @@ class VideoViewAdapter (private val context: Context, private val videos: Mutabl
         val vid = videos[position]
         holder.tvTitle.text = vid.snippet.title.toString()
         holder.tvDescription.text = vid.snippet.description.toString()
-        Glide.with(holder.itemView).load(vid.snippet.thumbnails.default.url.toString()).into(holder.ivVideo)
+        if (vid.snippet.thumbnails.default != null) {
+            Glide.with(holder.itemView).load(vid.snippet.thumbnails.default.url.toString()).into(holder.ivVideo)
+        }
         holder.cbVideo.maxWidth = 0
     }
 
