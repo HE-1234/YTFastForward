@@ -11,4 +11,6 @@
     <color name="colorPrimaryDark">#202020</color>
     <color name="colorAccent">#03DAC5</color>
     <color name="lighter_gray">#ddd</color>
+    <color name="youtube_red">#FF0000</color>
+    <color name="youtube_red2">#FF5a36</color>
 </resources>

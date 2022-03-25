@@ -14,7 +14,7 @@ import com.codepath.apps.restclienttemplate.R
 import com.google.api.services.youtube.model.PlaylistItem
 import com.google.api.services.youtube.model.SearchResult
 
-class VideoViewAdapter (private val context: Context, private val videos: MutableList<PlaylistItem>): RecyclerView.Adapter<VideoViewAdapter.ViewHolder>() {
+class VideoViewAdapter (private val context: Context, private val videos: MutableList<PlaylistItem>, private val onClickListener: (Int) -> Unit): RecyclerView.Adapter<VideoViewAdapter.ViewHolder>() {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): VideoViewAdapter.ViewHolder {
         val context = parent.context
         val inflater = LayoutInflater.from(context)
@@ -45,7 +45,7 @@ class VideoViewAdapter (private val context: Context, private val videos: Mutabl
             itemView.setOnClickListener(this)
         }
         override fun onClick(v: View?) {
-
+            onClickListener(adapterPosition)
         }
     }
 }

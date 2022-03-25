@@ -22,6 +22,7 @@ class PlaylistViewActivity : YouTubeBaseActivity() {
     lateinit var videoAdapter: VideoViewAdapter
     lateinit var client: YoutubeClient
     lateinit var id :String
+    lateinit var youtubePlayer: YouTubePlayer
     val videos = mutableListOf<PlaylistItem>()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -29,10 +30,6 @@ class PlaylistViewActivity : YouTubeBaseActivity() {
         id = intent.getStringExtra(PLAYLIST_EXTRA)
         client = RestApplication.getYoutubeClient(this)
         val youTubePlayerView = findViewById<View>(R.id.player) as YouTubePlayerView
-        rvVideos = findViewById(R.id.rvVideoView)
-        rvVideos.layoutManager = LinearLayoutManager(this)
-        videoAdapter = VideoViewAdapter(this, videos)
-        rvVideos.adapter = videoAdapter
         youTubePlayerView.initialize("YOUR API KEY",
             object : YouTubePlayer.OnInitializedListener {
                 override fun onInitializationSuccess(
@@ -40,6 +37,7 @@ class PlaylistViewActivity : YouTubeBaseActivity() {
                     youTubePlayer: YouTubePlayer, b: Boolean
                 ) {
                     // do any work here to cue video, play video, etc.
+                    youtubePlayer = youTubePlayer
                     youTubePlayer.cuePlaylist(id)
                 }
 
@@ -48,8 +46,11 @@ class PlaylistViewActivity : YouTubeBaseActivity() {
                     youTubeInitializationResult: YouTubeInitializationResult
                 ) {
                 }
-
             })
+        rvVideos = findViewById(R.id.rvVideoView)
+        rvVideos.layoutManager = LinearLayoutManager(this)
+        videoAdapter = VideoViewAdapter(this, videos, ::onRecyclerItemClick)
+        rvVideos.adapter = videoAdapter
         getVideos(id)
         var mBotton = findViewById<FloatingActionButton>(R.id.btnCreate);
         mBotton.setOnClickListener(View.OnClickListener() {
@@ -57,7 +58,14 @@ class PlaylistViewActivity : YouTubeBaseActivity() {
             intent.putExtra(PLAYLIST_EXTRA, id)
             startActivityForResult(intent,100)
         })
+
     }
+
+    fun onRecyclerItemClick(index: Int) {
+        youtubePlayer.release()
+        youtubePlayer.cuePlaylist(id, index, 0)
+    }
+
     fun getVideos(id:String){
         client.retrievePlaylistItems(id,  object : YoutubeResponseHandler<PlaylistItemListResponse>() {
             override fun onSuccess(json: PlaylistItemListResponse) {
