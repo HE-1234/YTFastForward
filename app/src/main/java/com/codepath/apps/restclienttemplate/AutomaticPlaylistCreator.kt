@@ -9,6 +9,7 @@ import android.widget.TextView
 import android.widget.Toast
 import com.google.api.services.youtube.model.Playlist
 import com.google.api.services.youtube.model.SearchListResponse
+import com.google.api.services.youtube.model.SearchResult
 
 class AutomaticPlaylistCreator : AppCompatActivity() {
     val client = RestApplication.getYoutubeClient(this)
@@ -32,18 +33,20 @@ class AutomaticPlaylistCreator : AppCompatActivity() {
                         keyword,
                         object : YoutubeResponseHandler<SearchListResponse>() {
                             override fun onSuccess(json: SearchListResponse) {
-                            var count = 0
-                            while(count < 10) {
-//                                val rnds = (0..24).random()
-                                val jsonObj = json.items[count]
-                                if (jsonObj.id != null && jsonObj.id.videoId != null) {
-                                    client.addVideoToPlaylist(playlist.id, jsonObj.id.videoId)
+//                                val sizeItems = json.items.size
+                                Log.e("AutoPlaylist", "Size of response is: $json")
+                                    var count = 0
+                                    while(count < 10) {
+    //                                val rnds = (0..24).random()
+                                        val jsonObj = json.items[count]
+                                        if (jsonObj.id != null && jsonObj.id.videoId != null) {
+                                            client.addVideoToPlaylist(playlist.id, jsonObj.id.videoId)
+                                        }
+                                        count += 1
                                 }
-                               count += 1
-                            }
-                                Toast.makeText(this@AutomaticPlaylistCreator, "Success", Toast.LENGTH_SHORT).show()
-                                finish()
-                            }
+                                    Toast.makeText(this@AutomaticPlaylistCreator, "Success", Toast.LENGTH_SHORT).show()
+                                    finish()
+                                }
 
                             override fun onFailure(response: SearchListResponse) {
                                 Log.i(TAG, "Error")

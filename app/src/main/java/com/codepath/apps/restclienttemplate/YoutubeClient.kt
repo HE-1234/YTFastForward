@@ -125,6 +125,35 @@ class YoutubeClient(accessToken: String){
         }
     }
 
+//    fun addVideosToPlaylist(playlistId: String, videos: ArrayList<String>, index: Int)
+//    {
+//        if (index >= videos.size)
+//        {
+//            return
+//        }
+//        val playlistItem = PlaylistItem()
+//        val snippet = PlaylistItemSnippet()
+//        snippet.playlistId = playlistId
+//        snippet.position = 0L
+//        val resourceId = ResourceId()
+//        resourceId.kind = "youtube#video"
+//        resourceId.videoId = videos[index]
+//        snippet.resourceId = resourceId
+//        playlistItem.snippet = snippet
+//
+//        val request = youtube.playlistItems().insert("snippet", playlistItem)
+//        val coroutineScope = MainScope()
+//        coroutineScope.launch {
+//            val defer = async(Dispatchers.IO) {
+//                request.execute()
+//
+//                val newIndex = index + 1
+//                addVideosToPlaylist(playlistId, videos, newIndex)
+//            }
+//        }
+//    }
+
+
     fun deletePlaylist(playlistId: String){
         val request = youtube.playlists().delete(playlistId)    
 
